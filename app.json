@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "3sg-nadhif-quiz-tablette-mai-2024",
-    "slug": "3sg-nadhif-quiz-tablette-mai-2024",
+    "name": "expo-prisma-ts-starter-kit",
+    "slug": "expo-prisma-ts-starter-kit",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "expo-prisma-ts-starter-kit",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.ulysse.expoPrismaTsStarterKit"
     },
     "web": {
       "bundler": "metro",
@@ -27,10 +28,21 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-secure-store",
+      "@prisma/react-native"
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "074d946c-7fbb-42fe-9a95-af1bf69b6cc5"
+      }
+    },
+    "owner": "ulysse-media"
   }
 }

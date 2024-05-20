@@ -3,7 +3,7 @@
  * https://docs.expo.io/guides/color-schemes/
  */
 
-import { Text as DefaultText, View as DefaultView } from 'react-native';
+import { Text as DefaultText, View as DefaultView, TextInput as DefaultTextInput, TextInputProps, TouchableOpacityProps, TouchableOpacity } from 'react-native';
 
 import Colors from '@/constants/Colors';
 import { useColorScheme } from './useColorScheme';
@@ -42,4 +42,26 @@ export function View(props: ViewProps) {
   const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
 
   return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
+}
+
+export function InputGroup(props: ViewProps) {
+  const { style, lightColor, darkColor, ...otherProps } = props;
+  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
+  const borderColor = useThemeColor({ light: lightColor, dark: darkColor }, 'tint');
+
+  return <DefaultView style={[{ backgroundColor, borderColor, borderWidth: 1, borderRadius: 4, alignItems: "center", flexDirection: "row", minHeight: 50, padding: 8 }, style]} {...otherProps} />;
+}
+
+export function TextInput(props: TextInputProps) {
+  const { style, ...otherProps } = props;
+  const backgroundColor = useThemeColor({ light: "light", dark: "dark" }, 'background');
+  const color = useThemeColor({ light: "light", dark: "dark" }, "text");
+  return <DefaultTextInput style={[{ backgroundColor, color }, style]} {...otherProps} />;
+}
+
+export function Button(props: TouchableOpacityProps) {
+  const { style, ...otherProps } = props;
+  const backgroundColor = useThemeColor({ light: "light", dark: "dark" }, 'background');
+
+  return <TouchableOpacity style={[{ backgroundColor, borderRadius: 46, borderWidth: 1, paddingVertical: 12, alignItems: "center" }, style]} {...otherProps} />;
 }
