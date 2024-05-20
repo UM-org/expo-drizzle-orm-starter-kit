@@ -1,16 +1,17 @@
 import React, { createContext, useState, useCallback } from 'react';
 import { Alert } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
-import { Player } from '@prisma/client';
+import { Player, Prisma } from '@prisma/client';
 import usePrisma from '@/hooks/usePrisma';
 
-type ContextProps = {
-    player: IPlayer | null;
+type GameContextProps = {
+    player: Player | null;
+    isLoading: boolean;
     reset: () => Promise<void> | void;
-    addNewPlayer: (data: NewPlayerData) => Promise<void> | void;
+    addNewPlayer: (data: Prisma.PlayerCreateInput) => Promise<void> | void;
 };
 
-const GameContext = createContext<Partial<ContextProps>>({ player: null, reset: () => { return }, addNewPlayer: (data: NewPlayerData) => { return } });
+const GameContext = createContext<Partial<GameContextProps>>({ isLoading: true, player: null, reset: () => { return }, addNewPlayer: (data: Prisma.PlayerCreateInput) => { return } });
 
 interface Props {
     children: React.ReactNode;
@@ -19,6 +20,7 @@ interface Props {
 const GameProvider = (props: Props) => {
     const prisma = usePrisma();
     const [player, setPlayer] = useState<Player | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const reset = useCallback(async () => {
         setPlayer(null)
@@ -27,19 +29,21 @@ const GameProvider = (props: Props) => {
     React.useEffect(() => {
         const prepare = async () => {
             try {
-                const _player = await SecureStore.getItem("-player")
+                const _player = await SecureStore.getItemAsync("-player")
                 if (_player)
                     setPlayer(JSON.parse(_player))
             } catch (error) {
                 console.log(error);
+            } finally {
+                setIsLoading(false)
             }
         }
         prepare().then().catch(e => console.log(e))
     }, [])
 
-    const addNewPlayer = useCallback(async (data: NewPlayerData) => {
+    const addNewPlayer = useCallback(async (data: Prisma.PlayerCreateInput) => {
         try {
-            const newPlayer = await prisma.player.create(data)
+            const newPlayer = await prisma.player.create({ data })
             if (newPlayer) {
                 setPlayer(newPlayer)
             } else {
@@ -72,6 +76,7 @@ const GameProvider = (props: Props) => {
     return (
         <GameContext.Provider
             value={{
+                isLoading,
                 player,
                 addNewPlayer,
                 reset

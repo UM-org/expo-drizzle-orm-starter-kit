@@ -4,7 +4,7 @@ import { Text, View } from '@/components/Themed';
 export default function IntroScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Intro</Text>
+      <Text style={styles.title}>Registration Intro</Text>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
     </View>
   );

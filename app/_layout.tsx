@@ -7,7 +7,8 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/components/useColorScheme';
-import { SettingsProvider } from '../contexts/SettingsContext';
+import { SettingsProvider } from '@/contexts/SettingsContext';
+import { GameProvider } from '@/contexts/GameContext';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -52,11 +53,15 @@ function RootLayoutNav() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <SettingsProvider>
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="(settings)" options={{ headerShown: false }} />
-        </Stack>
+        <GameProvider>
+          <Stack>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="(settings)" options={{ headerShown: false }} />
+            <Stack.Screen name="game" options={{ headerShown: false }} />
+            <Stack.Screen name="registration" options={{ headerShown: false }} />
+          </Stack>
+        </GameProvider>
       </SettingsProvider>
-    </ThemeProvider>
+    </ThemeProvider >
   );
 }

@@ -19,7 +19,7 @@ const OpenSettingsModal: React.FC<OpenSettingsModalProps> = (props) => {
             setIsCodeValid(false)
         } else {
             props?.onClose()
-            router.replace("/(settings)/");
+            router.push("/(settings)/");
         }
     }, [code])
 
