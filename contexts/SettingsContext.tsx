@@ -2,6 +2,7 @@ import React, { createContext, useState, useCallback } from 'react';
 import { Alert, StyleSheet } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import * as SecureStore from 'expo-secure-store';
+import usePrisma from '@/hooks/usePrisma';
 
 type ContextProps = {
     updateSetting: (prop: string, value: string | boolean | number | null) => void;
@@ -14,24 +15,22 @@ interface Props {
 }
 
 const SettingsProvider = (props: Props) => {
-    // React.useEffect(() => {
-    // 	const prepare = async () => {
-    // 		try {
-    // 			const oldValues = await SecureStore.getItemAsync("@tablette")
-    // 			if (oldValues) {
-    // 				setTab(JSON.parse(oldValues))
-    // 			} else {
-    // 				Alert.alert("Appareil non configuré !", "Veuillez saisir les cadeaux.")
-    // 			}
-    // 		} catch (error) {
-    // 			console.warn(error)
-    // 		}
-    // 		finally {
-    // 			await SplashScreen.hideAsync();
-    // 		}
-    // 	}
-    // 	prepare().then().catch(e => console.log(e))
-    // }, []);
+    const prisma = usePrisma();
+    React.useEffect(() => {
+        const initializeDb = async () => {
+            try {
+                prisma.$applyPendingMigrations();
+            } catch (e) {
+                console.error(`failed to apply migrations: ${e}`);
+                throw new Error(
+                    'Applying migrations failed, your app is now in an inconsistent state. We cannot guarantee safety, it is now your responsibility to reset the database or tell the user to re-install the app'
+                );
+            } finally {
+                await SplashScreen.hideAsync();
+            }
+        }
+        initializeDb().then().catch(e => console.log(e))
+    }, []);
 
     const updateSetting = useCallback(async (prop: string, value: string | boolean | number | null) => {
         // setIsAdmin(value)
