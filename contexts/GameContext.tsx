@@ -18,7 +18,7 @@ interface Props {
 }
 
 const GameProvider = (props: Props) => {
-    const prisma = usePrisma();
+    const { prisma } = usePrisma();
     const [player, setPlayer] = useState<Player | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 

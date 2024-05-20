@@ -5,7 +5,7 @@ import React, { useCallback } from 'react';
 import { Gift } from '@prisma/client';
 
 export default function GiftsScreen() {
-  const prisma = usePrisma();
+  const { prisma } = usePrisma();
   const [gifts, setGifts] = React.useState<Gift[]>([]);
 
   const fetchGifts = useCallback(async () => {
