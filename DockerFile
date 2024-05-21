@@ -1,5 +1,5 @@
 # Use the specified Ubuntu base image
-FROM ubuntu:jammy-20220810
+FROM ubuntu:jammy-20220815
 
 # Set environment variables for non-interactive installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -46,8 +46,27 @@ RUN wget https://dl.google.com/android/repository/android-ndk-r25b-linux.zip \
 ENV ANDROID_NDK_HOME=/opt/android-ndk
 ENV PATH=$PATH:$ANDROID_NDK_HOME
 
+# Install Expo CLI and EAS CLI
+RUN npm install -g expo-cli eas-cli
+
+# Create app directory and set it as the working directory
+WORKDIR /app
+
+# Copy the Expo project files to the container
+COPY . /app
+
+# Copy the build.sh script to the container
+COPY build.sh /app/build.sh
+
+RUN chmod +x build.sh
+
+# Install project dependencies
+RUN yarn install
+
 # Clean up
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Set the default command to bash
-CMD ["bash"]
+VOLUME build /app/build
+
+# Set the default command to log in and build the project
+CMD ["sh"]

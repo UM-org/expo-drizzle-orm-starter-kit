@@ -1,0 +1,69 @@
+name: Ulysse Organization Expo Android CD
+on:
+    workflow_dispatch:
+      inputs:
+        version:
+          description: 'Application version'
+          required: true
+          default: '1.0.0'
+
+jobs: 
+    build_android:
+      if: github.event_name == 'pull_request' || github.event_name == 'push'
+      name: Setup and Build
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v3
+        - name: 🏗 Setup Workflow
+          uses: ./.github/actions/setup
+  
+        - name: 🏗 Setup Node
+          uses: actions/setup-node@v3
+          with:
+            node-version: '18.x'
+            cache: pnpm
+        - name: 📦 Install dependencies
+          run: pnpm install
+       
+        - name: 🏗 Setup EAS
+          uses: expo/expo-github-action@v8
+          with:
+            eas-version: latest
+            token: ${{ secrets.EXPO_TOKEN }}
+  
+        - name: 👷 Build android app
+          run: |
+                eas build --local \
+                --non-interactive \
+                --output=./release/${{ github.event.repository.name }}_${{ github.event.inputs.version }}.apk \
+                --platform=android 
+
+        # Save the APK after the Build job is complete to publish it as a Github release in the next job
+        - name: Upload APK
+          uses: actions/upload-artifact@v3.1.2
+          with:
+            name: ${{ github.event.repository.name }}
+            path: ./release/${{ github.event.repository.name }}_${{ github.event.inputs.version }}.apk
+
+    release:
+        name: Release APK
+        needs: build_android
+        runs-on: ubuntu-latest
+        steps:
+          - name: Download APK from build
+            uses: actions/download-artifact@v1
+            with:
+              name: ${{ github.event.repository.name }}
+              
+          - name: Display structure of downloaded files
+            run: ls -l
+    
+          - name: Create Release
+            id: create_release
+            uses: softprops/action-gh-release@v1
+            with:
+              tag_name: v${{ github.event.inputs.version }}
+              name: Release v${{ github.event.inputs.version }}
+              draft: false
+              prerelease: false
+              files: ${{ github.event.repository.name }}/${{ github.event.repository.name }}_${{ github.event.inputs.version }}.apk
