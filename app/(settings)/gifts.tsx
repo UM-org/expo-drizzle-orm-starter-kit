@@ -1,21 +1,22 @@
 import { StyleSheet } from 'react-native';
 import { Text, View } from '@/components/Themed';
-import usePrisma from '@/hooks/usePrisma';
 import React, { useCallback } from 'react';
-import { Gift } from '@prisma/client';
+import { useFocusEffect } from 'expo-router';
+import { SelectGift, gifts } from '@/db/schema';
+import { db } from '@/db/client';
 
 export default function GiftsScreen() {
-  const { prisma } = usePrisma();
-  const [gifts, setGifts] = React.useState<Gift[]>([]);
+  const [data, setData] = React.useState<SelectGift[]>([]);
 
   const fetchGifts = useCallback(async () => {
-    const res = await prisma.gift.findMany();
-    setGifts(res)
+    const res = await db?.select().from(gifts);
+    setData(res || [])
   }, [])
 
-  React.useEffect(() => {
+  useFocusEffect(() => {
     fetchGifts().then().catch(e => console.log(e))
-  }, [])
+  })
+  
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Gifts</Text>

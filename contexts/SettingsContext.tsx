@@ -1,11 +1,12 @@
 import React, { createContext, useState, useCallback } from 'react';
-import { Alert, StyleSheet } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
-import * as SecureStore from 'expo-secure-store';
-import usePrisma from '@/hooks/usePrisma';
+import migrations from '@/drizzle/migrations';
+import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
+import { db } from '@/db/client';
 
 type ContextProps = {
     updateSetting: (prop: string, value: string | boolean | number | null) => void;
+    isLoadingDB: boolean
 };
 
 const SettingsContext = createContext<Partial<ContextProps>>({ updateSetting: (prop: string, value: string | boolean | number | null) => null });
@@ -15,11 +16,12 @@ interface Props {
 }
 
 const SettingsProvider = (props: Props) => {
-    const { initializeDb } = usePrisma();
-    React.useEffect(() => {
-        initializeDb().then().catch(e => console.log(e))
-    }, []);
+    const { success, error } = useMigrations(db, migrations);
 
+    const isLoadingDB = React.useMemo(() => {
+        return !success
+    }, [success])
+    
     const updateSetting = useCallback(async (prop: string, value: string | boolean | number | null) => {
         // setIsAdmin(value)
     }, [])
@@ -28,16 +30,11 @@ const SettingsProvider = (props: Props) => {
         <SettingsContext.Provider
             value={{
                 updateSetting,
+                isLoadingDB
             }}
         >
             {props.children}
         </SettingsContext.Provider>
     );
 };
-const style = StyleSheet.create({
-    iosStyle: {
-        position: "absolute",
-        zIndex: 99999,
-    },
-})
 export { SettingsContext, SettingsProvider };

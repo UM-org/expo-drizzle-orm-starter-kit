@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "expo-prisma-ts-starter-kit",
-    "slug": "expo-prisma-ts-starter-kit",
+    "name": "expo-drizzle-orm-starter-kit",
+    "slug": "expo-drizzle-orm-starter-kit",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "expo-prisma-ts-starter-kit",
+    "scheme": "expo-drizzle-orm-starter-kit",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -20,7 +20,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.ulysse.expoPrismaTsStarterKit"
+      "package": "com.ulysse.expoDrizzleOrmStarterKit"
     },
     "web": {
       "bundler": "metro",
@@ -29,8 +29,7 @@
     },
     "plugins": [
       "expo-router",
-      "expo-secure-store",
-      "@prisma/react-native"
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true

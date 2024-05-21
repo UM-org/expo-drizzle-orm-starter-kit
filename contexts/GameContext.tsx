@@ -1,25 +1,24 @@
 import React, { createContext, useState, useCallback } from 'react';
 import { Alert } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
-import { Player, Prisma } from '@prisma/client';
-import usePrisma from '@/hooks/usePrisma';
+import { InsertPlayer, SelectPlayer, players } from '@/db/schema';
+import { db } from '@/db/client';
 
 type GameContextProps = {
-    player: Player | null;
+    player: SelectPlayer | null;
     isLoading: boolean;
     reset: () => Promise<void> | void;
-    addNewPlayer: (data: Prisma.PlayerCreateInput) => Promise<void> | void;
+    addNewPlayer: (data: InsertPlayer) => Promise<void> | void;
 };
 
-const GameContext = createContext<Partial<GameContextProps>>({ isLoading: true, player: null, reset: () => { return }, addNewPlayer: (data: Prisma.PlayerCreateInput) => { return } });
+const GameContext = createContext<Partial<GameContextProps>>({ isLoading: true, player: null, reset: () => { return }, addNewPlayer: (data: InsertPlayer) => { return } });
 
 interface Props {
     children: React.ReactNode;
 }
 
 const GameProvider = (props: Props) => {
-    const { prisma } = usePrisma();
-    const [player, setPlayer] = useState<Player | null>(null);
+    const [player, setPlayer] = useState<SelectPlayer | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const reset = useCallback(async () => {
@@ -41,9 +40,9 @@ const GameProvider = (props: Props) => {
         prepare().then().catch(e => console.log(e))
     }, [])
 
-    const addNewPlayer = useCallback(async (data: Prisma.PlayerCreateInput) => {
+    const addNewPlayer = useCallback(async (data: InsertPlayer) => {
         try {
-            const newPlayer = await prisma.player.create({ data })
+            const newPlayer = (await db.insert(players).values(data).returning()).shift()
             if (newPlayer) {
                 setPlayer(newPlayer)
             } else {
