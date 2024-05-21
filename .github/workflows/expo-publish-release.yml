@@ -6,35 +6,51 @@ on:
           description: 'Application version'
           required: true
           default: '1.0.0'
+        profile:
+          description: 'Build Profile'
+          type: choice
+          required: true
+          options: 
+            - production
+            - development
+          default: 'production'
 
 jobs: 
     build_android:
       name: Setup and Build
       runs-on: ubuntu-latest
       steps:
-        - uses: actions/checkout@v3
-        - name: 🏗 Setup Workflow
-          uses: ./.github/actions/setup
+        - name: Check for EXPO_TOKEN
+          run: |
+            if [ -z "${{ secrets.EXPO_TOKEN }}" ]; then
+              echo "You must provide an EXPO_TOKEN secret linked to this project's Expo account in this repo's secrets. Learn more: https://docs.expo.dev/eas-update/github-actions"
+              exit 1
+            fi
+        - name: Checkout repository
+          uses: actions/checkout@v2
   
         - name: 🏗 Setup Node
           uses: actions/setup-node@v3
           with:
             node-version: '18.x'
             cache: pnpm
-        - name: 📦 Install dependencies
-          run: pnpm install
-       
+
         - name: 🏗 Setup EAS
           uses: expo/expo-github-action@v8
           with:
+            expo-version: latest
             eas-version: latest
             token: ${{ secrets.EXPO_TOKEN }}
-  
+
+        - name: 📦 Install dependencies
+          run: pnpm install
+
         - name: 👷 Build android app
           run: |
                 eas build --local \
                 --non-interactive \
                 --output=./release/${{ github.event.repository.name }}_${{ github.event.inputs.version }}.apk \
+                --profile ${{ github.event.inputs.profile }} \
                 --platform=android 
 
         # Save the APK after the Build job is complete to publish it as a Github release in the next job
