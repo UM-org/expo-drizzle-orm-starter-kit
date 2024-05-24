@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "287dfe9f-b56d-4e08-a5ce-d671d33d292c",
+  "id": "ae9be40d-c71e-4944-aa28-35ec71193b1d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "gifts": {
@@ -79,6 +79,34 @@
         "first_name": {
           "name": "first_name",
           "type": "text(256)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "phone": {
+          "name": "phone",
+          "type": "text(256)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "address": {
+          "name": "address",
+          "type": "text(256)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "gift": {
+          "name": "gift",
+          "type": "text(256)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "answers": {
+          "name": "answers",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false

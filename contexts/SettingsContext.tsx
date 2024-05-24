@@ -1,36 +1,69 @@
 import React, { createContext, useState, useCallback } from 'react';
-import * as SplashScreen from 'expo-splash-screen';
-import migrations from '@/drizzle/migrations';
-import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
-import { db } from '@/db/client';
+import * as SecureStore from 'expo-secure-store';
 
-type ContextProps = {
-    updateSetting: (prop: string, value: string | boolean | number | null) => void;
-    isLoadingDB: boolean
+type Settings = {
+    winProbability: number
 };
 
-const SettingsContext = createContext<Partial<ContextProps>>({ updateSetting: (prop: string, value: string | boolean | number | null) => null });
+type ContextProps = {
+    updateSetting: (prop: string, value: any) => void;
+    settings: Settings
+    isSuperAdmin: boolean
+    setIsSuperAdmin: (v: boolean) => void
+};
+
+const SettingsContext = createContext<Partial<ContextProps>>({
+    updateSetting: (prop: string, value: any) => null,
+    isSuperAdmin: false,
+    settings: {
+        winProbability: 0.8
+    }
+});
 
 interface Props {
     children: React.ReactNode;
 }
 
 const SettingsProvider = (props: Props) => {
-    const { success, error } = useMigrations(db, migrations);
+    const [isSuperAdmin, setIsSuperAdmin] = React.useState(false);
+    const [settings, setSettings] = React.useState<Settings>({ winProbability: 0.8 });
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    const isLoadingDB = React.useMemo(() => {
-        return !success
-    }, [success])
-    
-    const updateSetting = useCallback(async (prop: string, value: string | boolean | number | null) => {
-        // setIsAdmin(value)
+    console.log("settings : ", settings);
+
+    React.useEffect(() => {
+        const prepare = async () => {
+            try {
+                const _settings = await SecureStore.getItemAsync("-settings")
+                console.log("_settings", _settings);
+                if (_settings)
+                    setSettings(JSON.parse(_settings))
+            } catch (error) {
+                console.log(error);
+            } finally {
+                setIsLoading(false)
+            }
+        }
+        prepare().then().catch(e => console.log(e))
     }, [])
+
+    const updateSetting = useCallback(async (prop: string, value: any) => {
+        const _settings = { ...settings, [prop]: value }
+        setSettings(_settings)
+        await handleStorage(_settings)
+    }, [settings])
+
+    const handleStorage = useCallback(async (_settings: Settings) => {
+        await SecureStore.setItemAsync("-settings", JSON.stringify(_settings))
+    }, [settings])
 
     return (
         <SettingsContext.Provider
             value={{
                 updateSetting,
-                isLoadingDB
+                settings,
+                isSuperAdmin,
+                setIsSuperAdmin
             }}
         >
             {props.children}

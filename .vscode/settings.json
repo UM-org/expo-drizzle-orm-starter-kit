@@ -1,5 +1,9 @@
 {
     "cSpell.words": [
         "prisma"
-    ]
+    ],
+    "javascript.preferences.importModuleSpecifier": "non-relative",
+    "typescript.preferences.importModuleSpecifier": "non-relative",
+    "javascript.suggest.paths": true,
+    "typescript.suggest.paths": true
 }

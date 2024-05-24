@@ -10,7 +10,9 @@ interface TouchableScreenProps {
 const TouchableScreen = (props: TouchableScreenProps) => {
     return (
         <TouchableWithoutFeedback onPress={props.onPress} style={{ flex: 1, ...props.style }} hitSlop={{ top: 100, left: 100, right: 100, bottom: 100 }}>
-            {props.children}
+            <View style={{ flex: 1 }}>
+                {props.children}
+            </View>
         </TouchableWithoutFeedback>
     );
 }

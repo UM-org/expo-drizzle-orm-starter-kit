@@ -1,10 +1,11 @@
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { ImageBackground, StyleSheet, TouchableOpacity } from 'react-native';
 import { Text, View } from '@/components/Themed';
 import { Link, router } from 'expo-router';
 import React from 'react';
-import OpenSettingsModal from '../components/settings/OpenSettingsModal';
+import OpenSettingsModal from '@/components/settings-components/OpenSettingsModal';
 import { FontAwesome } from '@expo/vector-icons';
-import TouchableScreen from '../components/mixins/TouchableScreen';
+import bg from '@/assets/images/splash.png';
+import TouchableScreen from '@/components/reusable/TouchableScreen';
 
 export default function IntroScreen() {
     const [isSettingsModalOpen, setIsSettingsModalOpen] = React.useState(false);
@@ -15,16 +16,14 @@ export default function IntroScreen() {
 
     return (
         <TouchableScreen onPress={onClickStart}>
-            <View style={styles.container}>
-                <Text style={styles.title}>Intro</Text>
-                <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-                <View style={[{ position: "absolute", zIndex: 10, right: 10, bottom: 10 }]}>
+            <ImageBackground style={{ flex: 1, bottom: 5 }} source={bg}>
+                <View style={[{ position: "absolute", zIndex: 10, right: 10, top: 25, borderRadius: 8, backgroundColor: "transparent" }]}>
                     <TouchableOpacity onPress={() => setIsSettingsModalOpen(!isSettingsModalOpen)} style={styles.btn}>
-                        <FontAwesome name="cogs" size={28} style={{ margin: 2 }} color="black" />
+                        <FontAwesome name="cogs" size={24} style={{ margin: 2 }} color="#fff" />
                     </TouchableOpacity>
                 </View>
                 {isSettingsModalOpen && <OpenSettingsModal isVisible={isSettingsModalOpen} onClose={() => setIsSettingsModalOpen(false)} />}
-            </View>
+            </ImageBackground>
         </TouchableScreen>
     );
 }
@@ -45,8 +44,8 @@ const styles = StyleSheet.create({
         width: '80%',
     },
     btn: {
-        padding: 10,
-        borderRadius: 10,
+        padding: 8,
+        borderRadius: 8,
         shadowColor: "#000",
         shadowOffset: {
             width: 0,

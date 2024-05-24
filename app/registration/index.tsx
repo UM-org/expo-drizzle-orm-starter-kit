@@ -1,12 +1,22 @@
-import { StyleSheet } from 'react-native';
+import { ImageBackground, StyleSheet, Image } from 'react-native';
 import { Text, View } from '@/components/Themed';
+import bg from '@/assets/images/bg2.png';
+import fibelek from '@/assets/images/fibalek.png';
+import RegistrationForm from '@/components/registration-components/RegistrationForm';
+import KeyboardTouchDismiss from '@/components/reusable/KeyboardTouchDismiss';
 
 export default function IntroScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Registration Intro</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-    </View>
+    <ImageBackground style={styles.container} resizeMode='stretch' source={bg}>
+      <KeyboardTouchDismiss>
+        <>
+          <View style={{ marginBottom: "-3%", flex: 0.28, zIndex: 1000 }}>
+            <Image source={fibelek} resizeMode='center' style={{ maxWidth: "100%", maxHeight: "100%" }} />
+          </View>
+          <RegistrationForm />
+        </>
+      </KeyboardTouchDismiss>
+    </ImageBackground >
   );
 }
 
@@ -14,7 +24,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    paddingVertical: '5%'
   },
   title: {
     fontSize: 20,
